@@ -1,24 +1,56 @@
-<script src="store.js"></script>
-<script>
-  const params = new URLSearchParams(window.location.search);
-  const idx = parseInt(params.get("idx"), 10);
-  const data = getData();
-  if(isNaN(idx) || !data[idx]) {
-    document.body.innerHTML = "<p>Matchup introuvable</p>";
-  } else {
-    const m = data[idx];
-    document.getElementById("defense").textContent = m.defense.join(" · ");
-    const container = document.getElementById("offenses");
-    m.offenses.forEach(off => {
-      const el = document.createElement("div");
-      el.className = "item";
-      el.innerHTML = `
-        <div>
-          <div class="title">${off.team.join(" · ")}</div>
-          <div class="sub">${off.text || ""}</div>
-        </div>
-      `;
-      container.appendChild(el);
-    });
-  }
-</script>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>E7 GvG Helper – Détail</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <nav class="nav">
+    <div class="inner">
+      <div class="brand">E7 <i>GvG</i> Helper</div>
+      <a href="index.html">Liste</a>
+      <a class="active" href="attack.html">Attaque</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="panel">
+      <h2 style="margin:0 0 10px 0">Defense</h2>
+      <div id="defense" class="title"></div>
+    </div>
+
+    <div class="panel">
+      <h2 style="margin:0 0 10px 0">Offenses</h2>
+      <div id="offenses" class="list"></div>
+    </div>
+  </div>
+
+  <script src="store.js"></script>
+  <script>
+    const p = new URLSearchParams(location.search);
+    const idx = parseInt(p.get("idx") || "-1", 10);
+    const data = getData();
+
+    if (isNaN(idx) || !data[idx]) {
+      document.querySelector(".container").innerHTML = "<p>Matchup introuvable.</p>";
+    } else {
+      const m = data[idx];
+      document.getElementById("defense").textContent = m.defense.join(" · ");
+      const box = document.getElementById("offenses");
+      (m.offenses || []).forEach(off => {
+        const el = document.createElement("div");
+        el.className = "item";
+        el.innerHTML = `
+          <div>
+            <div class="title">${off.team.join(" · ")}</div>
+            <div class="sub">${off.text || ""}</div>
+          </div>
+        `;
+        box.appendChild(el);
+      });
+    }
+  </script>
+</body>
+</html>
