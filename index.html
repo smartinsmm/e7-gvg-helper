@@ -1,118 +1,41 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>E7 GvG Helper – Liste</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E7 GvG Helper</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <nav class="nav">
-    <div class="inner">
-      <div class="brand">E7 <i>GvG</i> Helper</div>
-      <a class="active" href="index.html">Liste</a>
-      <a href="attack.html">Attaque</a>
-    </div>
-  </nav>
+    <header>
+        <h1>E7 GvG Helper</h1>
+        <nav>
+            <a href="index.html">Liste</a>
+            <a href="attaque.html">Attaque</a>
+        </nav>
+    </header>
 
-  <div class="container">
-    <!-- Stepper -->
-    <div class="stepper">
-      <div class="step active">1</div><div class="sep"></div>
-      <div class="step">2</div><div class="sep"></div>
-      <div class="step">3</div><div class="sep"></div>
-      <div class="step">4</div><div class="sep"></div>
-      <div class="step">5</div><div class="sep"></div>
-      <div class="step">6</div>
-      <div class="step check">✓</div>
+    <div class="container">
+        <h2>Matchups</h2>
+        <div id="list"></div>
     </div>
 
-    <!-- Search -->
-    <div class="panel">
-      <h2 style="text-align:center">Rechercher une défense<br>(3 héros)</h2>
-      <div class="searchRow">
-        <input class="input" id="d1" placeholder="Défenseur 1 (ex: Rinak)" />
-        <input class="input" id="d2" placeholder="Défenseur 2 (ex: Boss Arunka)" />
-        <input class="input" id="d3" placeholder="Défenseur 3 (ex: Empyrean Ilynav)" />
-        <button class="btn primary" id="btnSearch">Rechercher</button>
-      </div>
-      <div class="small" style="margin-top:8px">Astuce : l’ordre n’a pas d’importance.</div>
-    </div>
+    <script src="store.js"></script>
+    <script>
+        const container = document.getElementById("list");
+        const data = getData();
+        container.innerHTML = "";
 
-    <!-- Results -->
-    <div id="resultZone" style="display:none">
-      <h2 id="defTitle"></h2>
-      <div id="resultList" class="list"></div>
-    </div>
-
-    <!-- Default stack (if no search yet) -->
-    <div id="defaultStack" class="panel">
-      <h2>Matchups</h2>
-      <div id="stackList" class="list"></div>
-    </div>
-  </div>
-
-  <script src="store.js"></script>
-  <script>
-    const imgSrc = name => `img/${name.replace(/\s+/g,'_')}.png`; // optionnel (avatars)
-    const data = getData();
-
-    // default stack = 1er matchup pour montrer le rendu
-    const stack = document.getElementById('stackList');
-    stack.innerHTML = '';
-    if(data[0]){
-      const m = data[0];
-      const rows = m.offenses.map((off, i) => {
-        const colors = ['green','brown','blue'];
-        return `
-          <div class="row ${colors[i%3]}">
-            <div class="avatars">
-              ${off.team.map(h => `<div class="avatar"><img src="${imgSrc(h)}" onerror="this.parentNode.textContent='${h[0]}'"></div>`).join('')}
-            </div>
-            <div class="names">${off.team.join(' - ')}</div>
-            <a class="go" href="detail.html?def=${encodeURIComponent(m.defense.join(','))}&idx=${i}">➜</a>
-          </div>
-        `;
-      }).join('');
-      stack.innerHTML = rows;
-    }
-
-    // search by 3 names (orderless)
-    const norm = s => s.trim().toLowerCase().replace(/\s+/g,' ');
-    const keyOf = arr => [...arr].map(norm).sort().join('|');
-
-    document.getElementById('btnSearch').onclick = () => {
-      const vals = [d1.value, d2.value, d3.value].map(v=>v.trim()).filter(Boolean);
-      if(vals.length!==3){ alert('Entre 3 noms.'); return; }
-
-      const found = data.find(m => keyOf(m.defense)===keyOf(vals));
-      document.getElementById('defaultStack').style.display='none';
-      const zone = document.getElementById('resultZone');
-      const title = document.getElementById('defTitle');
-      const list = document.getElementById('resultList');
-
-      zone.style.display='block';
-      list.innerHTML='';
-
-      if(!found){
-        title.textContent = 'Aucun résultat pour : ' + vals.join(' / ');
-        return;
-      }
-      title.textContent = 'Defense : ' + found.defense.join(' – ');
-      found.offenses.forEach((off,i)=>{
-        const colors = ['green','brown','blue'];
-        const row = document.createElement('div');
-        row.className = `row ${colors[i%3]}`;
-        row.innerHTML = `
-          <div class="avatars">
-            ${off.team.map(h => `<div class="avatar"><img src="${imgSrc(h)}" onerror="this.parentNode.textContent='${h[0]}'"></div>`).join('')}
-          </div>
-          <div class="names">${off.team.join(' - ')}</div>
-          <a class="go" href="detail.html?def=${encodeURIComponent(found.defense.join(','))}&idx=${i}">➜</a>
-        `;
-        list.appendChild(row);
-      });
-    };
-  </script>
+        data.forEach((m, i) => {
+            const el = document.createElement("div");
+            el.className = "list-item";
+            el.innerHTML = `
+                <span>${m.defense.join(" · ")}</span>
+                <span>${m.offenses.length} offenses dispo</span>
+                <a href="detail.html?idx=${i}" class="btn-ghost">→</a>
+            `;
+            container.appendChild(el);
+        });
+    </script>
 </body>
 </html>
