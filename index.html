@@ -1,48 +1,40 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>E7 GvG Helper – Liste</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <title>E7 GvG Helper</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Header -->
-  <nav class="nav">
-    <div class="inner">
-      <div class="brand">E7 <i>GvG</i> Helper</div>
-      <a class="active" href="index.html">Liste</a>
-      <a href="attack.html">Attaque</a>
-    </div>
-  </nav>
+    <header>
+        <h1>E7 GvG Helper</h1>
+        <nav>
+            <a href="attaque.html">Attaque</a>
+        </nav>
+    </header>
 
-  <div class="container">
-    <div class="panel">
-      <h2 style="margin:0 0 10px 0">Matchups</h2>
-      <!-- LA LISTE DOIT EXISTER -->
-      <div id="list" class="list"></div>
-    </div>
-  </div>
+    <main>
+        <div id="list"></div>
+    </main>
 
-  <!-- Charger les scripts APRÈS le HTML -->
-  <script src="store.js"></script>
-  <script>
-    const container = document.getElementById("list");
-    const data = getData();             // fourni par store.js (seed si vide)
-    container.innerHTML = "";
+    <script src="store.js"></script>
+    <script>
+        const container = document.getElementById("list");
+        const data = getData();
 
-    data.forEach((m, i) => {
-      const el = document.createElement("div");
-      el.className = "item";
-      el.innerHTML = `
-        <div>
-          <div class="title">${m.defense.join(" · ")}</div>
-          <div class="sub">${m.offenses?.length || 0} offenses dispo</div>
-        </div>
-        <a href="detail.html?idx=${i}" class="btn ghost">→</a>
-      `;
-      container.appendChild(el);
-    });
-  </script>
+        container.innerHTML = "";
+        data.forEach((m, i) => {
+            const el = document.createElement("div");
+            el.className = "item";
+            el.innerHTML = `
+                <div>
+                    <div class="title">${m.defense.join(" - ")}</div>
+                    <div class="sub">${m.offenses.length} offenses dispo</div>
+                </div>
+                <a href="detail.html?idx=${i}" class="btn">→</a>
+            `;
+            container.appendChild(el);
+        });
+    </script>
 </body>
 </html>
