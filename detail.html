@@ -1,0 +1,24 @@
+<script src="store.js"></script>
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const idx = parseInt(params.get("idx"), 10);
+  const data = getData();
+  if(isNaN(idx) || !data[idx]) {
+    document.body.innerHTML = "<p>Matchup introuvable</p>";
+  } else {
+    const m = data[idx];
+    document.getElementById("defense").textContent = m.defense.join(" · ");
+    const container = document.getElementById("offenses");
+    m.offenses.forEach(off => {
+      const el = document.createElement("div");
+      el.className = "item";
+      el.innerHTML = `
+        <div>
+          <div class="title">${off.team.join(" · ")}</div>
+          <div class="sub">${off.text || ""}</div>
+        </div>
+      `;
+      container.appendChild(el);
+    });
+  }
+</script>
