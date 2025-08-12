@@ -1,79 +1,41 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>E7 GvG Helper – Détail</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détails - E7 GvG Helper</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <nav class="nav">
-    <div class="inner">
-      <div class="brand">E7 <i>GvG</i> Helper</div>
-      <a href="index.html">Liste</a>
-      <a class="active" href="attack.html">Attaque</a>
-    </div>
-  </nav>
+    <header>
+        <h1>E7 GvG Helper</h1>
+        <nav>
+            <a href="index.html">Liste</a>
+            <a href="attaque.html">Attaque</a>
+        </nav>
+    </header>
 
-  <div class="container">
-    <div class="stepper">
-      <div class="step">1</div><div class="sep"></div>
-      <div class="step">2</div><div class="sep"></div>
-      <div class="step">3</div><div class="sep"></div>
-      <div class="step active">4</div><div class="sep"></div>
-      <div class="step">5</div><div class="sep"></div>
-      <div class="step">6</div>
-      <div class="step check">✓</div>
-    </div>
+    <div class="container" id="details"></div>
 
-    <div class="panel">
-      <h2>Defense Team</h2>
-      <div id="defAv" class="avatars"></div>
-    </div>
+    <script src="store.js"></script>
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const idx = params.get("idx");
+        const data = getData()[idx];
 
-    <div class="panel">
-      <div class="titleLine">
-        <h2>Offense Team</h2>
-        <div id="teamNames" class="names"></div>
-      </div>
-      <div id="atkAv" class="avatars"></div>
-      <div id="desc" class="small" style="margin-top:10px"></div>
-      <div id="links" class="links"></div>
-    </div>
-  </div>
-
-  <script src="store.js"></script>
-  <script>
-    const imgSrc = name => `img/${name.replace(/\s+/g,'_')}.png`;
-    const q = new URLSearchParams(location.search);
-    const def = (q.get('def')||'').split(',').map(s=>s.trim()).filter(Boolean);
-    const idx = parseInt(q.get('idx')||'0',10);
-
-    const norm = s => s.trim().toLowerCase().replace(/\s+/g,' ');
-    const keyOf = arr => [...arr].map(norm).sort().join('|');
-    const data = getData();
-
-    const matchup = data.find(m => keyOf(m.defense)===keyOf(def)) || data[0];
-
-    // Defense
-    const d = document.getElementById('defAv');
-    matchup.defense.forEach(h=>{
-      d.insertAdjacentHTML('beforeend', `<div class="avatar"><img src="${imgSrc(h)}" onerror="this.parentNode.textContent='${h[0]}'"></div>`);
-    });
-
-    // Offense (selected)
-    const off = matchup.offenses[idx] || matchup.offenses[0];
-    document.getElementById('teamNames').textContent = off.team.join(' - ');
-    const a = document.getElementById('atkAv');
-    off.team.forEach(h=>{
-      a.insertAdjacentHTML('beforeend', `<div class="avatar"><img src="${imgSrc(h)}" onerror="this.parentNode.textContent='${h[0]}'"></div>`);
-    });
-    document.getElementById('desc').textContent = off.text || '';
-
-    const links = document.getElementById('links');
-    (off.links||[]).forEach((u,i)=>{
-      links.insertAdjacentHTML('beforeend', `<a href="${u}" target="_blank" rel="noopener">LIEN ${i+1}</a>`);
-    });
-  </script>
+        const details = document.getElementById("details");
+        details.innerHTML = `
+            <h2>Defense Team</h2>
+            <div class="hero-list">
+                ${data.defense.map(hero => `<div class="hero"><img src="https://via.placeholder.com/60" alt="${hero}"><div>${hero}</div></div>`).join("")}
+            </div>
+            <h2>Offense Team</h2>
+            ${data.offenses.map(team => `
+                <div class="hero-list">
+                    ${team.map(hero => `<div class="hero"><img src="https://via.placeholder.com/60" alt="${hero}"><div>${hero}</div></div>`).join("")}
+                </div>
+            `).join("")}
+        `;
+    </script>
 </body>
 </html>
