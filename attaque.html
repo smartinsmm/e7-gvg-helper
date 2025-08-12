@@ -1,48 +1,79 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title>Ajouter une Attaque</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>E7 GvG Helper – Attaque</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <header>
-        <h1>Ajouter une Attaque</h1>
-        <a href="index.html">⬅ Retour</a>
-    </header>
+  <nav class="nav">
+    <div class="inner">
+      <div class="brand">E7 <i>GvG</i> Helper</div>
+      <a href="index.html">Liste</a>
+      <a class="active" href="attack.html">Attaque</a>
+    </div>
+  </nav>
 
-    <main>
-        <form id="attackForm">
-            <label>Nom Défense (3 héros) :</label>
-            <input type="text" id="def1" placeholder="Héros 1" required>
-            <input type="text" id="def2" placeholder="Héros 2" required>
-            <input type="text" id="def3" placeholder="Héros 3" required>
+  <div class="container">
+    <div class="panel">
+      <h2>Ajouter une composition</h2>
+      <div class="small">Défense (3 héros) puis Offense (3 héros). Description + 3 liens optionnels.</div>
 
-            <label>Nom de l’attaque :</label>
-            <input type="text" id="offName" placeholder="Nom attaque" required>
+      <h3>Défense</h3>
+      <div class="searchRow">
+        <input id="def1" class="input" placeholder="Défenseur 1" />
+        <input id="def2" class="input" placeholder="Défenseur 2" />
+        <input id="def3" class="input" placeholder="Défenseur 3" />
+        <button class="btn ghost" id="clearDef">Effacer</button>
+      </div>
 
-            <label>Lien :</label>
-            <input type="url" id="offLink" placeholder="https://..." required>
+      <h3 style="margin-top:12px">Offense</h3>
+      <div class="searchRow">
+        <input id="atk1" class="input" placeholder="Héros 1" />
+        <input id="atk2" class="input" placeholder="Héros 2" />
+        <input id="atk3" class="input" placeholder="Héros 3" />
+        <button class="btn ghost" id="clearAtk">Effacer</button>
+      </div>
 
-            <button type="submit">Ajouter</button>
-        </form>
-    </main>
+      <input id="desc" class="input" placeholder="Description (optionnel)" style="margin-top:10px"/>
+      <div class="searchRow" style="grid-template-columns:1fr 1fr 1fr; margin-top:10px">
+        <input id="l1" class="input" placeholder="Lien 1" />
+        <input id="l2" class="input" placeholder="Lien 2" />
+        <input id="l3" class="input" placeholder="Lien 3" />
+      </div>
 
-    <script src="store.js"></script>
-    <script>
-        const form = document.getElementById("attackForm");
+      <div style="display:flex;gap:10px;margin-top:12px">
+        <button class="btn primary" id="save">Ajouter</button>
+        <button class="btn ghost" id="reset">Tout effacer</button>
+      </div>
+      <div id="msg" class="small" style="margin-top:8px"></div>
+    </div>
+  </div>
 
-        form.addEventListener("submit", (e) => {
-            e.preventDefault();
+  <script src="store.js"></script>
+  <script>
+    const g = id => document.getElementById(id);
+    g('clearDef').onclick = ()=>['def1','def2','def3'].forEach(k=>g(k).value='');
+    g('clearAtk').onclick = ()=>['atk1','atk2','atk3'].forEach(k=>g(k).value='');
+    g('reset').onclick    = ()=>['def1','def2','def3','atk1','atk2','atk3','desc','l1','l2','l3'].forEach(k=>g(k).value='');
 
-            const def = [def1.value, def2.value, def3.value];
-            const offName = offName.value;
-            const offLink = offLink.value;
+    g('save').onclick = ()=>{
+      const defense = [g('def1').value, g('def2').value, g('def3').value].map(s=>s.trim()).filter(Boolean);
+      const team    = [g('atk1').value, g('atk2').value, g('atk3').value].map(s=>s.trim()).filter(Boolean);
+      const text    = g('desc').value.trim();
+      const links   = [g('l1').value.trim(), g('l2').value.trim(), g('l3').value.trim()].filter(Boolean);
 
-            addAttack(def, { name: offName, link: offLink });
-            alert("Attaque ajoutée !");
-            window.location.href = "index.html";
-        });
-    </script>
+      if(defense.length!==3){ g('msg').textContent = "⚠️ Il faut 3 défenseurs."; return; }
+      if(team.length!==3){ g('msg').textContent = "⚠️ Il faut 3 héros en attaque."; return; }
+
+      try{
+        const { idx, teamIdx } = addOffense(defense, team, text, links);
+        g('msg').innerHTML = `✅ Ajouté ! <a href="detail.html?def=${encodeURIComponent(defense.join(','))}&idx=${teamIdx}">Voir la fiche</a>`;
+      }catch(e){
+        g('msg').textContent = "Erreur : " + e.message;
+      }
+    };
+  </script>
 </body>
 </html>
