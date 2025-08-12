@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>E7 GvG Helper – Ajouter une attaque</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <nav class="nav">
+    <div class="inner">
+      <div class="brand">E7 <i>GvG</i> Helper</div>
+      <a href="index.html">Liste</a>
+      <a class="active" href="attack.html">Attaque</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="panel">
+      <h2>Ajouter une composition d’attaque</h2>
+      <div class="small">Renseigne la <b>défense (3 héros)</b> puis la <b>team d’attaque (3 héros)</b>. Description et liens optionnels.</div>
+
+      <div style="margin-top:14px;font-weight:700">Défense</div>
+      <div class="searchRow">
+        <input id="def1" type="text" placeholder="Défenseur 1" />
+        <input id="def2" type="text" placeholder="Défenseur 2" />
+        <input id="def3" type="text" placeholder="Défenseur 3" />
+        <button class="btn ghost" id="clearDef">Effacer</button>
+      </div>
+
+      <div style="margin-top:18px;font-weight:700">Offense</div>
+      <div class="searchRow">
+        <input id="atk1" type="text" placeholder="Héros 1" />
+        <input id="atk2" type="text" placeholder="Héros 2" />
+        <input id="atk3" type="text" placeholder="Héros 3" />
+        <button class="btn ghost" id="clearAtk">Effacer</button>
+      </div>
+
+      <input id="desc" type="text" placeholder="Description / tips (optionnel)" />
+      <input id="l1" type="text" placeholder="Lien 1 (optionnel)" />
+      <input id="l2" type="text" placeholder="Lien 2 (optionnel)" />
+      <input id="l3" type="text" placeholder="Lien 3 (optionnel)" />
+
+      <div style="margin-top:12px;display:flex;gap:10px">
+        <button class="btn" id="save">Ajouter l’attaque</button>
+        <button class="btn ghost" id="reset">Tout effacer</button>
+      </div>
+      <div id="msg" class="small" style="margin-top:6px"></div>
+    </div>
+  </div>
+
+  <script src="store.js"></script>
+  <script>
+    const g = id => document.getElementById(id);
+    g('clearDef').onclick = ()=>['def1','def2','def3'].forEach(k=>g(k).value='');
+    g('clearAtk').onclick = ()=>['atk1','atk2','atk3'].forEach(k=>g(k).value='');
+    g('reset').onclick    = ()=>['def1','def2','def3','atk1','atk2','atk3','desc','l1','l2','l3'].forEach(k=>g(k).value='');
+
+    g('save').onclick = ()=>{
+      const defense = [g('def1').value, g('def2').value, g('def3').value].map(s=>s.trim()).filter(Boolean);
+      const team    = [g('atk1').value, g('atk2').value, g('atk3').value].map(s=>s.trim()).filter(Boolean);
+      const text    = g('desc').value.trim();
+      const links   = [g('l1').value.trim(), g('l2').value.trim(), g('l3').value.trim()].filter(Boolean);
+
+      if(defense.length!==3){ g('msg').textContent = "⚠️ Il faut 3 défenseurs."; return; }
+      if(team.length!==3){ g('msg').textContent = "⚠️ Il faut 3 héros en attaque."; return; }
+
+      try{
+        const idx = addOffense(defense, team, text, links);
+        g('msg').innerHTML = `✅ Attaque ajoutée !`;
+      }catch(e){
+        g('msg').textContent = "Erreur: " + e.message;
+      }
+    };
+  </script>
+</body>
+</html>
