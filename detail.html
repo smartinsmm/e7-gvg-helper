@@ -1,41 +1,46 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Détails - E7 GvG Helper</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>Détails - E7 GvG Helper</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <h1>E7 GvG Helper</h1>
-        <nav>
-            <a href="index.html">Liste</a>
-            <a href="attaque.html">Attaque</a>
-        </nav>
-    </header>
+  <header>
+    <h1>E7 GvG Helper</h1>
+    <nav>
+      <a href="index.html">Liste</a>
+      <a href="attack.html">Attaque</a>
+    </nav>
+  </header>
 
-    <div class="container" id="details"></div>
+  <main id="details"></main>
 
-    <script src="store.js"></script>
-    <script>
-        const params = new URLSearchParams(window.location.search);
-        const idx = params.get("idx");
-        const data = getData()[idx];
+  <script src="store.js"></script>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const idx = parseInt(params.get("idx"), 10);
+    const data = getData();
+    const container = document.getElementById("details");
 
-        const details = document.getElementById("details");
-        details.innerHTML = `
-            <h2>Defense Team</h2>
-            <div class="hero-list">
-                ${data.defense.map(hero => `<div class="hero"><img src="https://via.placeholder.com/60" alt="${hero}"><div>${hero}</div></div>`).join("")}
-            </div>
-            <h2>Offense Team</h2>
-            ${data.offenses.map(team => `
-                <div class="hero-list">
-                    ${team.map(hero => `<div class="hero"><img src="https://via.placeholder.com/60" alt="${hero}"><div>${hero}</div></div>`).join("")}
-                </div>
-            `).join("")}
-        `;
-    </script>
+    if (!data[idx]) {
+      container.innerHTML = "<p>Défense introuvable.</p>";
+    } else {
+      const def = data[idx];
+      let html = `
+        <h2>Defense Team</h2>
+        <div class="team">${def.defense.map(h => `<div class="hero">${h}</div>`).join('')}</div>
+        <h2>Offense Team(s)</h2>
+      `;
+      if (!def.offenses || def.offenses.length === 0) {
+        html += "<p>Aucune offense enregistrée pour cette défense.</p>";
+      } else {
+        def.offenses.forEach(off => {
+          html += `<div class="team">${off.map(h => `<div class="hero">${h}</div>`).join('')}</div>`;
+        });
+      }
+      container.innerHTML = html;
+    }
+  </script>
 </body>
 </html>
