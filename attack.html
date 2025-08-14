@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Ajouter Attaque - E7 GvG Helper</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>E7 GvG Helper</h1>
+    <nav>
+      <a href="index.html">Liste</a>
+      <a href="attack.html" class="active">Attaque</a>
+    </nav>
+  </header>
+
+  <main>
+    <h2>Ajouter une nouvelle attaque</h2>
+    <form id="attackForm">
+      <input type="text" id="def1" placeholder="Défenseur 1 (ex: Rinak)">
+      <input type="text" id="def2" placeholder="Défenseur 2">
+      <input type="text" id="def3" placeholder="Défenseur 3">
+      <input type="text" id="off1" placeholder="Attaquant 1">
+      <input type="text" id="off2" placeholder="Attaquant 2">
+      <input type="text" id="off3" placeholder="Attaquant 3">
+      <button type="submit">Ajouter</button>
+    </form>
+  </main>
+
+  <script src="store.js"></script>
+  <script>
+    document.getElementById("attackForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const d1 = document.getElementById("def1").value.trim();
+      const d2 = document.getElementById("def2").value.trim();
+      const d3 = document.getElementById("def3").value.trim();
+      const o1 = document.getElementById("off1").value.trim();
+      const o2 = document.getElementById("off2").value.trim();
+      const o3 = document.getElementById("off3").value.trim();
+
+      if (!d1 || !d2 || !d3 || !o1 || !o2 || !o3) {
+        alert("Remplis tous les champs !");
+        return;
+      }
+
+      addOffense([d1, d2, d3], [o1, o2, o3]);
+      alert("Attaque ajoutée !");
+      this.reset();
+    });
+  </script>
+</body>
+</html>
