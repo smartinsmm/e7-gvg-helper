@@ -1,41 +1,50 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E7 GvG Helper</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>E7 GvG Helper</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <h1>E7 GvG Helper</h1>
-        <nav>
-            <a href="index.html">Liste</a>
-            <a href="attaque.html">Attaque</a>
-        </nav>
-    </header>
+  <header>
+    <h1>E7 GvG Helper</h1>
+    <nav>
+      <a href="index.html" class="active">Liste</a>
+      <a href="attack.html">Attaque</a>
+    </nav>
+  </header>
 
-    <div class="container">
-        <h2>Matchups</h2>
-        <div id="list"></div>
-    </div>
+  <main>
+    <h2>Matchups</h2>
+    <div id="list"></div>
+  </main>
 
-    <script src="store.js"></script>
-    <script>
-        const container = document.getElementById("list");
-        const data = getData();
-        container.innerHTML = "";
+  <script src="store.js"></script>
+  <script>
+    const container = document.getElementById("list");
 
-        data.forEach((m, i) => {
-            const el = document.createElement("div");
-            el.className = "list-item";
-            el.innerHTML = `
-                <span>${m.defense.join(" · ")}</span>
-                <span>${m.offenses.length} offenses dispo</span>
-                <a href="detail.html?idx=${i}" class="btn-ghost">→</a>
-            `;
-            container.appendChild(el);
-        });
-    </script>
+    function renderAllDefenses() {
+      const data = getData();
+      container.innerHTML = "";
+
+      if (!data || !data.length) {
+        container.innerHTML = `<div class="list-item">Aucune défense enregistrée pour l’instant.</div>`;
+        return;
+      }
+
+      data.forEach((m, i) => {
+        const el = document.createElement("div");
+        el.className = "list-item";
+        el.innerHTML = `
+          <span>${m.defense.join(" · ")}</span>
+          <span>${(m.offenses?.length || 0)} offenses dispo</span>
+          <a href="detail.html?idx=${i}" class="btn-ghost">➜</a>
+        `;
+        container.appendChild(el);
+      });
+    }
+
+    renderAllDefenses();
+  </script>
 </body>
 </html>
